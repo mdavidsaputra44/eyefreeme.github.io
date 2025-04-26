@@ -1,0 +1,8 @@
+<!DOCTYPE html>
+<script>
+const timeData = {
+    datetime: new Date().toISOString(),
+    timestamp: Math.floor(Date.now()/1000)
+};
+window.location.href = `data:application/json,${encodeURIComponent(JSON.stringify(timeData))}`;
+</script>
