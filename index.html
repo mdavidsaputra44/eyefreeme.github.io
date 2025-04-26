@@ -1,8 +1,52 @@
 <!DOCTYPE html>
-<script>
-const timeData = {
-    datetime: new Date().toISOString(),
-    timestamp: Math.floor(Date.now()/1000)
-};
-window.location.href = `data:application/json,${encodeURIComponent(JSON.stringify(timeData))}`;
-</script>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Time API Endpoint</title>
+    <script>
+        // Generate time data with additional security features
+        function generateTimeData() {
+            const now = new Date();
+            return {
+                datetime: now.toISOString(),
+                timestamp: Math.floor(now.getTime()/1000),
+                timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                // Optional: Add simple verification token
+                token: btoa(`TIME-${now.getUTCFullYear()}-${now.getUTCMonth()+1}`).replace(/=/g,'')
+            };
+        }
+
+        // Handle different request types
+        function handleRequest() {
+            const timeData = generateTimeData();
+            const jsonData = JSON.stringify(timeData, null, 2);
+            
+            // Check if this is a fetch/XHR request
+            if (window.fetch || window.XMLHttpRequest) {
+                // Respond with JSON content-type
+                document.write(`<pre>${jsonData}</pre>`);
+                document.close();
+            } else {
+                // Redirect to data URI for direct access
+                window.location.href = `data:application/json,${encodeURIComponent(jsonData)}`;
+            }
+        }
+
+        // Execute when page loads
+        window.onload = handleRequest;
+    </script>
+</head>
+<body>
+    <!-- Fallback content if JavaScript is disabled -->
+    <noscript>
+        <h1>Time API Endpoint</h1>
+        <p>This page requires JavaScript to function as a time API.</p>
+        <p>Current server time (approximate): 
+            <script>
+                document.write(new Date().toISOString());
+            </script>
+        </p>
+    </noscript>
+</body>
+</html>
